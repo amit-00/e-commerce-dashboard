@@ -12,7 +12,7 @@ const PrivateRoute = ({ component: RouteComponent, ...rest }) => {
                 if(!user){
                     return <Redirect to='/' /> 
                 }
-                if(user.uid !== process.env.REACT_APP_ADMIN_UID){
+                if(user.email !== process.env.REACT_APP_ADMIN_EMAIL){
                     return <Redirect to='/' /> 
                 }
                 return <RouteComponent { ...routeProps } />

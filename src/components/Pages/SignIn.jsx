@@ -19,7 +19,7 @@ const SignIn = () => {
     }
 
     if (user){
-        if(user.uid === process.env.REACT_APP_ADMIN_UID){
+        if(user.email === process.env.REACT_APP_ADMIN_EMAIL){
             return <Redirect to='/dashboard' />
         }
     }

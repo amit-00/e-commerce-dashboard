@@ -1,6 +1,7 @@
 import firebase from "firebase/app";
 import 'firebase/auth';
 import 'firebase/firestore';
+import 'firebase/functions';
 import 'firebase/storage';
 
 const firebaseConfig = {
@@ -17,8 +18,23 @@ if(!firebase.apps.length){
     firebase.initializeApp(firebaseConfig);
 }
 
+
 export const auth = firebase.auth();
 export const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
 
 export const firestore = firebase.firestore();
 export const storage = firebase.storage();
+export const functions = firebase.functions();
+
+
+export async function createProduct (data) {
+    const stripeProduct = functions.httpsCallable('stripeProduct');
+    const doc = await stripeProduct(data);
+    return doc;
+}
+
+export async function approveAccount (email) {
+    const makeWholesale = functions.httpsCallable('makeWholesale');
+    const user = await makeWholesale({email})
+    return user;
+}

@@ -8,5 +8,15 @@ export const MenuItems = [
         path: '/products',
         title: 'Products',
         icon: 'fas fa-boxes'
-    }
+    },
+    {
+        path: '/categories',
+        title: 'Categories',
+        icon: 'fas fa-clone'
+    },
+    {
+        path: '/accounts',
+        title: 'Accounts',
+        icon: 'fas fa-user'
+    },
 ]

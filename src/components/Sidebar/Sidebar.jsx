@@ -34,7 +34,6 @@ const Sidebar = () => {
 
     const { user } = useContext(UserContext);
 
-
     return (
         <>
             <div className="text-4xl mb-8 flex flex-row justify-between items-center h-20">

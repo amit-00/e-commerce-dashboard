@@ -10,9 +10,16 @@ const NewProduct = () => {
     const [description, setDescription] = useState('');
     const [cats, setCats] = useState('');
     const [color, setColor] = useState('');
-    const [price, setPrice] = useState('');
+    const [cad, setCad] = useState('');
+    const [usd, setUsd] = useState('');
+    const [cadSecond, setCadSecond] = useState('');
+    const [usdSecond, setUsdSecond] = useState('');
+    const [cadThird, setCadThird] = useState('');
+    const [usdThird, setUsdThird] = useState('');
+    const [cadFourth, setCadFourth] = useState('');
+    const [usdFourth, setUsdFourth] = useState('');
     const [files, setFiles] = useState([]);
-    const [ selectedFiles, setSelectedFiles ] = useState([]);
+    const [selectedFiles, setSelectedFiles] = useState([]);
     const [submitted, setSubmitted] = useState(false);
 
     const productsContext = useContext(ProductsContext);
@@ -41,15 +48,31 @@ const NewProduct = () => {
     const onSubmit = (e) => {
         e.preventDefault();
 
-        const numPrice = parseFloat(price);
-
+        const numCad = Math.round(parseFloat(cad) * 100);
+        const numUsd = Math.round(parseFloat(usd) * 100);
+        const numCadSecond = Math.round(parseFloat(cadSecond) * 100);
+        const numUsdSecond = Math.round(parseFloat(usdSecond) * 100);
+        const numCadThird = Math.round(parseFloat(cadThird) * 100);
+        const numUsdThird = Math.round(parseFloat(usdThird) * 100);
+        const numCadFourth = Math.round(parseFloat(cadFourth) * 100);
+        const numUsdFourth = Math.round(parseFloat(usdFourth) * 100);
+        
         const data = {
             name,
             description,
-            color,
-            price: numPrice
+            color
         }
-        productsContext.addProduct(files, cats, data);
+        const prices = {
+            first_amount_cad: numCad,
+            first_amount_usd: numUsd,
+            second_amount_cad: numCadSecond,
+            second_amount_usd: numUsdSecond,
+            third_amount_cad: numCadThird,
+            third_amount_usd: numUsdThird,
+            fourth_amount_cad: numCadFourth,
+            fourth_amount_usd: numUsdFourth,
+        }
+        productsContext.addProduct(files, cats, data, prices);
         setSubmitted(true);
     }
 
@@ -78,8 +101,37 @@ const NewProduct = () => {
                     <input className='border p-2 mt-2 w-full' type="text" name='color' value={color} onChange={e => setColor(e.target.value)} />
                 </div>
                 <div className='mb-8 w-full'>
-                    <p>Price</p>
-                    <input className='border p-2 mt-2 w-full' type="text" name='price' value={price} onChange={e => setPrice(e.target.value)} />
+                    <p>CAD Price</p>
+                    <input className='border p-2 mt-2 w-full' type="text" name='cad' value={cad} onChange={e => setCad(e.target.value)} />
+                </div>
+                <div className='mb-8 w-full'>
+                    <p>USD Price</p>
+                    <input className='border p-2 mt-2 w-full' type="text" name='usd' value={usd} onChange={e => setUsd(e.target.value)} />
+                </div>
+                <h1 className="text-lg mb-8">Wholesale Prices</h1>
+                <div className='mb-8 w-full'>
+                    <p>CAD 0-15</p>
+                    <input className='border p-2 mt-2 w-full' type="text" name='cadSecond' value={cadSecond} onChange={e => setCadSecond(e.target.value)} />
+                </div>
+                <div className='mb-8 w-full'>
+                    <p>USD 0-15</p>
+                    <input className='border p-2 mt-2 w-full' type="text" name='usdSecond' value={usdSecond} onChange={e => setUsdSecond(e.target.value)} />
+                </div>
+                <div className='mb-8 w-full'>
+                    <p>CAD 15-23</p>
+                    <input className='border p-2 mt-2 w-full' type="text" name='cadThird' value={cadThird} onChange={e => setCadThird(e.target.value)} />
+                </div>
+                <div className='mb-8 w-full'>
+                    <p>USD 15-23</p>
+                    <input className='border p-2 mt-2 w-full' type="text" name='usdThird' value={usdThird} onChange={e => setUsdThird(e.target.value)} />
+                </div>
+                <div className='mb-8 w-full'>
+                    <p>CAD 23-30</p>
+                    <input className='border p-2 mt-2 w-full' type="text" name='cadFourth' value={cadFourth} onChange={e => setCadFourth(e.target.value)} />
+                </div>
+                <div className='mb-8 w-full'>
+                    <p>USD 23-30</p>
+                    <input className='border p-2 mt-2 w-full' type="text" name='usdFourth' value={usdFourth} onChange={e => setUsdFourth(e.target.value)} />
                 </div>
                 <div className="uploader">
                     <div className="heading">Upload Images</div>

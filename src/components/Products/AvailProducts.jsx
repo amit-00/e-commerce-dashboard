@@ -10,7 +10,6 @@ const AvailProducts = ({ products }) => {
             <table className='w-full' >
                 <thead>
                     <tr className='uppercase bg-dark text-white text-left' >
-                        <th className='border border-white p-2' >id</th>
                         <th className='border border-white p-2'>name</th>
                         <th className='border border-white p-2'>price</th>
                         <th className='border border-white p-2'>details</th>

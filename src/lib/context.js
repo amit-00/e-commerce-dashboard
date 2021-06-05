@@ -1,12 +1,26 @@
 import React, { createContext, useReducer } from "react";
-import { ProductsReducer } from './reducers';
-import { firestore, storage } from './firebase';
-import { GET_PRODUCTS, SET_LOADING, GET_PRODUCT } from './types';
+import { ProductsReducer, CategoriesReducer, AccountsReducer, OrdersReducer } from './reducers';
+import { firestore, storage, createProduct } from './firebase';
+import { 
+    GET_PRODUCTS,
+    GET_PRODUCT,
+    SET_PROD_LOADING,
+    GET_CATEGORIES,
+    SET_CAT_LOADING, 
+    GET_ACCOUNT, 
+    GET_ACCOUNTS, 
+    SET_ACC_LOADING,
+    GET_ORDERS,
+    GET_ORDER,
+    SET_ORD_LOADING } from './types';
 
 export const UserContext = createContext({ user: null });
 
 
 export const ProductsContext = createContext();
+export const OrdersContext = createContext();
+export const AccountsContext = createContext();
+export const CategoriesContext = createContext();
 
 export const ProductsProvider = ({ children }) => {
     const initialState = {
@@ -50,7 +64,7 @@ export const ProductsProvider = ({ children }) => {
         });
     }
 
-    const addProduct = async(files, cats, data) => {
+    const addProduct = async(files, cats, data, prices) => {
         try{
             let form = { ...data };
             let image = [];
@@ -69,8 +83,19 @@ export const ProductsProvider = ({ children }) => {
                 form.categories = cats.split(',').map(cat => cat.trim());
             }
 
-            console.log(form);
-            await firestore.collection('products').doc().set(form);
+            form.slug = form.name.toLowerCase().trim().split(/\s+/).join('-') + '-' + form.color.toLowerCase().trim().split(/\s+/).join('-');
+
+            const final = {
+                product: {
+                    ...form
+                },
+                amounts: {
+                    ...prices
+                }
+            }
+
+            const doc = await createProduct(final);
+            console.log(doc);
             
         }
         catch(err){
@@ -96,7 +121,7 @@ export const ProductsProvider = ({ children }) => {
         }
     }
 
-    const setLoading = () => dispatch({ type: SET_LOADING });
+    const setLoading = () => dispatch({ type: SET_PROD_LOADING });
 
     return (
         <ProductsContext.Provider value={{ products: state.products, product: state.product, loading: state.loading, getProducts, getDetails, addProduct, deleteProduct }} >
@@ -105,3 +130,191 @@ export const ProductsProvider = ({ children }) => {
     )
 
 }
+
+export const OrdersProvider = ({ children }) => {
+    const initialState = {
+        orders: [],
+        order: null,
+        loading: true
+    }
+
+    const [state, dispatch] = useReducer(OrdersReducer, initialState);
+
+    const getOrders = async () => {
+        setLoading();
+        try{
+            const ordersRef = firestore.collection('orders');
+            ordersRef.onSnapshot((querySnapshot) => {
+                const items = [];
+                querySnapshot.forEach(doc => {
+                    const da = doc.data();
+                    const id = doc.id;
+                    const fullDoc = { id, ...da };
+                    items.push(fullDoc);
+                });
+                console.log('call')
+                dispatch({
+                    type: GET_ORDERS,
+                    payload: items
+                });
+            })
+        }
+        catch (err) {
+            console.error(err);
+        }
+        
+    }
+
+    const getOrderDetails = (id) => {
+        setLoading();
+        dispatch({
+            type: GET_ORDER,
+            payload: id
+        })
+    }
+
+    const changeOrderStatus = async (id, deliv) => {
+        try{
+            const docRef = firestore.collection('orders').doc(id);
+            await docRef.update({ delivered: !deliv })
+
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
+
+    const setLoading = () => dispatch({ type: SET_ORD_LOADING });
+
+    return (
+        <OrdersContext.Provider value={{ orders: state.orders, order: state.order, loading: state.loading, getOrderDetails, getOrders, setLoading, changeOrderStatus }} >
+            {children}
+        </OrdersContext.Provider>
+    )
+
+}
+
+export const AccountsProvider = ({ children }) => {
+    const initialState = {
+        accounts: [],
+        account: null,
+        loading: true
+    }
+
+    const [state, dispatch] = useReducer(AccountsReducer, initialState);
+
+    const getAccounts = async () => {
+        setLoading();
+        try{
+            const accountsRef = firestore.collection('users');
+            accountsRef.onSnapshot((querySnapshot) => {
+                const items = [];
+                querySnapshot.forEach(doc => {
+                    const da = doc.data();
+                    const id = doc.id;
+                    const fullDoc = { id, ...da };
+                    items.push(fullDoc);
+                });
+                dispatch({
+                    type: GET_ACCOUNTS,
+                    payload: items
+                });
+            })
+
+        }
+        catch (err) {
+            console.error(err);
+        }
+        
+    }
+
+    const getAccountDetails = (uid) => {
+        setLoading();
+        dispatch({ 
+            type: GET_ACCOUNT,
+            payload: uid
+        });
+    }
+
+    const changeApprovedStatus = async (id, ver) => {
+        try{
+            const docRef = firestore.collection('users').doc(id);
+            await docRef.update({ verified: !ver });
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
+
+    const setLoading = () => dispatch({ type: SET_ACC_LOADING });
+
+    return (
+        <AccountsContext.Provider value={{ accounts: state.accounts, account: state.account, loading: state.loading, getAccounts, getAccountDetails, changeApprovedStatus }} >
+            {children}
+        </AccountsContext.Provider>
+    )
+
+}
+
+export const CategoriesProvider = ({ children }) => {
+    const initialState = {
+        categories: [],
+        loading: true
+    }
+
+    const [state, dispatch] = useReducer(CategoriesReducer, initialState);
+
+    const getCategories = async () => {
+        try{
+            const catsRef = firestore.collection('categories');
+            catsRef.onSnapshot((querySnapshot) => {
+                const items = [];
+                querySnapshot.forEach(doc => {
+                    const da = doc.data();
+                    const id = doc.id;
+                    const fullDoc = { id, ...da };
+                    items.push(fullDoc);
+                });
+                dispatch({
+                    type: GET_CATEGORIES,
+                    payload: items
+                });
+            })
+        }
+        catch (err) {
+            console.error(err);
+        }
+        
+    }
+
+    const addCategory = async (name) => {
+        try{
+            const docRef = firestore.collection('categories').doc();
+            await docRef.set({
+                name
+            });
+        }
+        catch(err) {
+            console.error(err);
+        }
+    }
+
+    const deleteCategory = async (category) => {
+        try{
+            await firestore.collection('categories').doc(category.id).delete();
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
+
+    const setLoading = () => dispatch({ type: SET_CAT_LOADING });
+
+    return (
+        <CategoriesContext.Provider value={{ categories: state.categories, loading: state.loading, getCategories, deleteCategory, addCategory, setLoading }} >
+            {children}
+        </CategoriesContext.Provider>
+    )
+
+}
+

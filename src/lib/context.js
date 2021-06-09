@@ -85,12 +85,27 @@ export const ProductsProvider = ({ children }) => {
 
             form.slug = form.name.toLowerCase().trim().split(/\s+/).join('-') + '-' + form.color.toLowerCase().trim().split(/\s+/).join('-');
 
-            const final = {
-                product: {
-                    ...form
-                },
-                amounts: {
-                    ...prices
+            let final;
+
+            if(data.wholesale){
+                final = {
+                    product: {
+                        ...form
+                    },
+                    amounts: {
+                        ...prices
+                    }
+                }
+            }
+            else{
+                final = {
+                    product: {
+                        ...form
+                    },
+                    amounts: {
+                        first_amount_cad: prices.first_amount_cad,
+                        first_amount_usd: prices.first_amount_usd,
+                    }
                 }
             }
 
@@ -143,7 +158,7 @@ export const OrdersProvider = ({ children }) => {
     const getOrders = async () => {
         setLoading();
         try{
-            const ordersRef = firestore.collection('orders');
+            const ordersRef = firestore.collection('orders').orderBy('orderDate', 'desc');
             ordersRef.onSnapshot((querySnapshot) => {
                 const items = [];
                 querySnapshot.forEach(doc => {

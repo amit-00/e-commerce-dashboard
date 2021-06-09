@@ -25,7 +25,7 @@ const ViewProduct = ({ match }) => {
                 <p className='text-xl font-light mb-8' >{product.description}</p>
                 <h1 className="text-2xl mb-4">Categories:</h1>
                 <div className="mb-8">
-                    { product.categories.map(cat => <p className='my-4' >{cat}</p>) }
+                    { product.categories.map((cat, index) => <p className='my-4' key={index} >{cat}</p>) }
                 </div>
                 <h1 className="text-2xl mb-4">Prices:</h1>
                 <p className="my-4">Base CAD: ${ (product.cad/100).toFixed(2) }</p>

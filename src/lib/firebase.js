@@ -5,13 +5,13 @@ import 'firebase/functions';
 import 'firebase/storage';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyAz9-UDlb1KF0HVBbSQKJocGtg5LY12rPo",
-    authDomain: "vinyl-imprint.firebaseapp.com",
-    projectId: "vinyl-imprint",
-    storageBucket: "vinyl-imprint.appspot.com",
-    messagingSenderId: "498850998645",
-    appId: "1:498850998645:web:ba32a0f763bccb85d10b3c",
-    measurementId: "G-BMBHTX7ZML"
+    apiKey: process.env.REACT_APP_API_KEY,
+    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+    projectId: process.env.REACT_APP_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+    appId: process.env.REACT_APP_APP_ID,
+    measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
 
 if(!firebase.apps.length){
